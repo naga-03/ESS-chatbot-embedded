@@ -13,12 +13,11 @@ class ESSChatbot:
         self,
         employees_file: str = "data/employees.json",
         intents_file: str = "config/intents.json",
-        model_name: str = "llama2",
         gemini_model: str = "gemini-2.5-flash-lite"
     ):
         """Initialize the ESS Chatbot."""
         self.auth_manager = AuthManager(employees_file)
-        self.intent_detector = IntentDetector(intents_file, model_name)
+        self.intent_detector = IntentDetector(intents_file)
         self.entity_extractor = EntityExtractor()  # ✅ FIXED
         self.business_logic = BusinessLogicHandler(employees_file)
         self.response_generator = LLMResponseGenerator(gemini_model)

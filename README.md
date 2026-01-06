@@ -33,20 +33,27 @@ A modern AI-powered Employee Self-Service chatbot system that uses natural langu
 
 ```
 ess-new/
-├── app.py                      # Streamlit UI application
+├── app.py                      # Streamlit UI application with profile management
 ├── requirements.txt            # Python dependencies
 ├── README.md                   # This file
+├── QUICKSTART.md               # Quick start guide
+├── test_*.py                   # Test files for different components
 ├── config/
-│   └── intents.json           # Intent definitions with examples
+│   └── intents.json           # Intent definitions with examples (25+ intents)
 ├── data/
-│   └── employees.json         # Mock employee database
+│   ├── employees.json         # Mock employee database
+│   └── profile_manager.py     # Profile update functionality
 ├── src/
 │   ├── __init__.py
 │   ├── auth.py                # Authentication manager
 │   ├── chatbot.py             # Main chatbot orchestrator
-│   ├── intent_detector.py     # AI-based intent detection
+│   ├── intent_detector.py     # Semantic intent detection using embeddings
+│   ├── embedding_utils.py     # Sentence-transformer embeddings
+│   ├── similarity.py          # Cosine similarity calculations
 │   ├── entity_extractor.py    # Entity extraction from queries
-│   └── business_logic.py      # Business logic handlers
+│   ├── business_logic.py      # Business logic handlers
+│   ├── response_generator.py  # LLM response generation
+│   └── phone_validator.py     # Phone number validation
 └── venv/                       # Python virtual environment
 ```
 
@@ -99,14 +106,33 @@ The chatbot will open in your browser at `http://localhost:8501`
 - "How do I contact HR?"
 - "Tell me about the company"
 - "What benefits are available?"
+- "Hello" / "Hi there"
 
 ### Employee-Specific Queries (After Login)
-- "How many leaves do I have?"
+
+**Leave Management:**
+- "How many leaves do I have?" / "What is my leave balance?"
+- "Am I applicable to take sick leave?"
+- "Show my leave history for this year"
+- "Has my leave been approved?"
+- "I want to apply for leave on January 15 for 3 days"
+
+**Personal Information:**
 - "Who is my manager?"
 - "What is my department?"
 - "What is my attendance record?"
-- "I want to apply for leave on January 15 for 3 days"
-- "What is my salary?"
+- "Show my birthday / work anniversary"
+- "What are my skills?"
+
+**Payroll & Career:**
+- "What is my salary?" / "Show my payslip"
+- "Show my tax calculation for 2025"
+- "When is the appraisal cycle?"
+- "Show my goals and objectives"
+
+**Profile Updates:**
+- "Update my phone number"
+- "Change my emergency contact"
 
 ## 🔧 How It Works
 
@@ -141,7 +167,7 @@ User Query
     ↓
 Intent Detection (Sentence Transformers)
     ↓
-Entity Extraction (spaCy + Regex)
+Entity Extraction (Regex Patterns)
     ↓
 Permission Check (Auth Manager)
     ↓
@@ -231,18 +257,14 @@ This chatbot demonstrates:
 
 ## 📚 Technologies Used
 
-- **NLP:** Sentence Transformers, spaCy
-- **ML:** scikit-learn (cosine similarity)
+- **NLP:** Sentence Transformers (all-mpnet-base-v2 model)
+- **ML:** Cosine similarity calculations
 - **Backend:** Python
 - **UI:** Streamlit
 - **Data:** JSON (mock HRMS)
+- **Environment:** python-dotenv for configuration
 
 ## 🐛 Troubleshooting
-
-### spaCy model not found
-```bash
-python -m spacy download en_core_web_sm
-```
 
 ### Streamlit not starting
 ```bash
