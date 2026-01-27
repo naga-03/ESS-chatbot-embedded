@@ -25,9 +25,6 @@ SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
 
 EMPLOYEE_DATA_PATH = "data/employees.json"
 
-if not SMTP_PASSWORD:
-    raise RuntimeError("SMTP_PASSWORD missing in environment variables")
-
 # --------------------------------------------------
 # In-memory context (per admin)
 # --------------------------------------------------
