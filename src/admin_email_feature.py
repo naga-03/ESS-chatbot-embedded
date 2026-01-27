@@ -171,5 +171,6 @@ def _send_email(
 
     with smtplib.SMTP(SMTP_SERVER, SMTP_PORT, timeout=10) as server:
         server.starttls()
-        server.login(from_email, SMTP_PASSWORD)
+        SMTP_USERNAME = os.getenv("SMTP_USERNAME")
+        server.login(SMTP_USERNAME, SMTP_PASSWORD)
         server.sendmail(from_email, to_email, msg.as_string())
