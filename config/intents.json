@@ -428,6 +428,24 @@
         "tell me what you can do",
         "what are your capabilities"
       ]
-    }
+    },
+    {
+  "intent_id": "ADMIN_SEND_EMAIL",
+  "name": "Admin Send Email",
+  "category": "admin",
+  "is_private": true,
+  "examples": [
+    "send mail to Alice Johnson",
+    "send email to Alice Johnson",
+    "mail Alice Johnson",
+    "email Alice Johnson",
+    "notify Alice Johnson",
+    "send a message to Alice Johnson",
+    "inform Alice Johnson",
+    "send mail to Bob Smith",
+    "email Carol White",
+    "send mail to Carol White"
+  ]
+}
   ]
 }

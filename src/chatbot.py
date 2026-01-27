@@ -5,6 +5,9 @@ from src.entity_extractor import EntityExtractor
 from src.business_logic import BusinessLogicHandler
 from src.response_generator import LLMResponseGenerator
 
+# ✅ ADDITIVE IMPORT
+from src.admin_email_feature import handle_admin_email_feature
+
 
 class ESSChatbot:
     """Main chatbot orchestrator for Employee Self-Service."""
@@ -18,7 +21,7 @@ class ESSChatbot:
         """Initialize the ESS Chatbot."""
         self.auth_manager = AuthManager(employees_file)
         self.intent_detector = IntentDetector(intents_file)
-        self.entity_extractor = EntityExtractor()  # ✅ FIXED
+        self.entity_extractor = EntityExtractor()
         self.business_logic = BusinessLogicHandler(employees_file)
         self.response_generator = LLMResponseGenerator(gemini_model)
 
@@ -46,24 +49,77 @@ class ESSChatbot:
     def _process_query(self, query: str) -> Dict[str, Any]:
         """Process a normal user query."""
 
+        # =====================================================
+        # ✅ PRIORITY: ONGOING ADMIN EMAIL FLOW
+        # (Stateful flow must override intent detection)
+        # =====================================================
+        if self.auth_manager.is_authenticated():
+            user_data = self.auth_manager.get_current_user()
+
+            admin_email_reply = handle_admin_email_feature(
+                user_data,
+                {"raw_text": query}
+            )
+
+            # If admin email feature is active or completes,
+            # it will NOT ask for employee name again
+            if not admin_email_reply.startswith("❓ Please specify the employee name"):
+                return {
+                    "success": True,
+                    "intent": "ADMIN_SEND_EMAIL",
+                    "intent_name": "Admin Send Email",
+                    "confidence": 1.0,
+                    "entities": {},
+                    "message": admin_email_reply,
+                    "requires_auth": True
+                }
+
+        # -----------------------------------------------------
+        # ⬇️ NORMAL INTENT FLOW (UNCHANGED)
+        # -----------------------------------------------------
         intent, confidence = self.intent_detector.get_intent(query, threshold=0.5)
 
         if intent is None:
             return self._fallback_response(query)
 
         entities = self.entity_extractor.extract_entities(query)
+        entities["raw_text"] = query
         intent_id = intent["intent_id"]
 
+        # 🔐 Private intent auth check (UNCHANGED)
         if self.intent_detector.is_private_intent(intent_id) and not self.auth_manager.is_authenticated():
             return {
                 "success": False,
                 "intent": intent_id,
                 "entities": entities,
-                "message": "This information is private. Please login using /login <employee_id> <password>"
+                "message": "This information is private. Please login using /login <employee_id> <password>",
+                "requires_auth": True
             }
 
         user_data = self.auth_manager.get_current_user() if self.auth_manager.is_authenticated() else None
 
+        # =====================================================
+        # ✅ START ADMIN EMAIL FLOW (FIRST TURN)
+        # =====================================================
+        if intent_id == "ADMIN_SEND_EMAIL":
+            admin_message = handle_admin_email_feature(
+                user_data,
+                entities
+            )
+
+            return {
+                "success": True,
+                "intent": intent_id,
+                "intent_name": intent.get("name"),
+                "confidence": float(confidence),
+                "entities": entities,
+                "message": admin_message,
+                "requires_auth": True
+            }
+
+        # -----------------------------------------------------
+        # ⬇️ EXISTING BUSINESS LOGIC (100% UNCHANGED)
+        # -----------------------------------------------------
         business_response = self.business_logic.handle_intent(
             intent_id,
             self.auth_manager,
@@ -136,7 +192,10 @@ class ESSChatbot:
     def _handle_status_command(self) -> Dict[str, Any]:
         if self.auth_manager.is_authenticated():
             user = self.auth_manager.get_current_user()
-            return {"success": True, "message": f"Logged in as {user['name']} ({user['employee_id']})"}
+            return {
+                "success": True,
+                "message": f"Logged in as {user['name']} ({user['employee_id']})"
+            }
         return {"success": True, "message": "Not logged in."}
 
     def _handle_help_command(self) -> Dict[str, Any]:

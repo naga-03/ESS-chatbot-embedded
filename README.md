@@ -160,6 +160,15 @@ The chatbot will open in your browser at `http://localhost:8501`
 - Natural language message is returned
 - Chat history is maintained
 
+## Email Configuration
+
+This project uses SMTP for admin email notifications.
+
+Before running:
+1. Create a `.env` file
+2. Copy values from `.env.example`
+3. Use an app-specific SMTP password
+
 ## 📊 Architecture
 
 ```
