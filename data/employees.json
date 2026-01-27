@@ -6,7 +6,7 @@
       "department": "Engineering",
       "manager": "Bob Smith",
       "phone": "9876543210",
-      "email": "employee1@gmail.com",
+      "email": "employee1@techcorp.com",
       "role": "EMPLOYEE",
       "emergency_contact": {
         "name": "John Johnson",
@@ -83,7 +83,7 @@
       "department": "Engineering",
       "manager": "Carol White",
       "phone": "+91 6756548044",
-      "email": "employee2@gmail.com",
+      "email": "employee2@techcorp.com",
       "role": "EMPLOYEE",
       "emergency_contact": {
         "name": "Sarah Smith",
@@ -145,7 +145,7 @@
       "department": "HR",
       "manager": "David Brown",
       "phone": "+1-555-0103",
-      "email": "hr@gmail.com",
+      "email": "hr@techcorp.com",
       "role": "ADMIN",
       "emergency_contact": {
         "name": "Mike White",
@@ -197,8 +197,8 @@
       "department": "Management",
       "manager": null,
       "phone": "+1-555-0104",
-      "email": "hr2@gmail.com",
-      "role": "ADMIN",
+      "email": "employee4@techcorp.com",
+      "role": "EMPLOYEE",
       "emergency_contact": {
         "name": "Lisa Brown",
         "phone": "+1-555-5104",
@@ -248,7 +248,7 @@
       "department": "Sales",
       "manager": "Bob Smith",
       "phone": "+1-555-0105",
-      "email": "employee5@gmail.com",
+      "email": "employee5@techcorp.com",
       "role": "EMPLOYEE",
       "emergency_contact": {
         "name": "Tom Davis",
